@@ -1,6 +1,6 @@
-lut = readtable('COMP NEURO BIDS\BN_Atlas_246_LUT.txt')
+lut = readtable('C:\Users\madis\Documents\COMP NEURO BIDS\BN_Atlas_246_LUT.txt')
 
-info = niftiinfo('COMP NEURO BIDS/BN_Atlas_246_1mm.nii');
+info = niftiinfo('C:\Users\madis\Documents\COMP NEURO BIDS/BN_Atlas_246_1mm.nii');
 raw_atlas = niftiread(info);
 
 atlas = double(raw_atlas) * info.MultiplicativeScaling + info.AdditiveOffset;
@@ -75,6 +75,8 @@ n = 54;
 meanTEQ = 45;
 sdTEQ = 7; 
 empathy = round(min(max(meanTEQ + sdTEQ * randn(54,1),0),64))
+summary(empathy)
+
 brain_activity = insula_values
 
 scatter(brain_activity, empathy, 'filled')
@@ -85,6 +87,7 @@ title('Brain Activity vs Empathy')
 high_empathy = empathy >= 45;
 sum(high_empathy)
 sum(~high_empathy)
+
 log_model = fitglm(brain_activity, high_empathy, 'Distribution','binomial')
 
 predict_prob = predict(log_model, brain_activity)
@@ -97,3 +100,12 @@ accuracy = sum(classify_predict == high_empathy) / length(high_empathy);
 
 disp(conf_matrix)
 disp(['Accuracy = ' num2str(accuracy)])
+%%
+predictprob_low = predict_prob(predict_prob < 0.5)
+predictprob_high = predict_prob(predict_prob >= 0.5)
+
+predictproblow_mean = mean(predictprob_low)
+predictprobhigh_mean = mean(predictprob_high)
+
+predictproblow_std = std(predictprob_low)
+predictprobhigh_std = std(predictprob_high)
